@@ -1,0 +1,39 @@
+#!/bin/bash
+
+#black	30		normal					0
+#red	31		bold/lighter				1
+#green	32		darker					2
+#yellow	33		italicized				3
+#blue	34		underlined				4
+#purple	35		(indeterminate)				5
+#cyan	36		(indeterminate)				6
+#white  37              color background on prompt,		7
+#	                     words terminal background color
+#		        transparent (disappears)		8
+#			strikethrough				9
+
+#set numbers at end to start at beginning with first one
+if [ -z $CURRENT_PROMPT_COLOR_NUM ]; then
+    CURRENT_PROMPT_COLOR_NUM=37
+fi
+
+if [ -z $CURRENT_PROMPT_TEXT_NUM ]; then
+    CURRENT_PROMPT_TEXT_NUM=9
+fi
+
+#carry out rotation, skipping bad numbers
+CURRENT_PROMPT_COLOR_NUM=$((CURRENT_PROMPT_COLOR_NUM + 1))
+if [ $CURRENT_PROMPT_COLOR_NUM == "38" ]; then #beyond colors
+    CURRENT_PROMPT_COLOR_NUM=30
+    CURRENT_PROMPT_TEXT_NUM=$((CURRENT_PROMPT_TEXT_NUM + 1))
+    if [ $CURRENT_PROMPT_TEXT_NUM == "5" ]; then #going to the indeterminates
+	CURRENT_PROMPT_TEXT_NUM=7
+    elif [ $CURRENT_PROMPT_TEXT_NUM == "8" ]; then #going to invisible
+	CURRENT_PROMPT_TEXT_NUM=9
+    elif [ $CURRENT_PROMPT_TEXT_NUM == "10" ]; then #beyond options
+	CURRENT_PROMPT_TEXT_NUM=0
+    fi
+fi
+
+export CURRENT_PROMPT_COLOR_NUM
+export CURRENT_PROMPT_TEXT_NUM
