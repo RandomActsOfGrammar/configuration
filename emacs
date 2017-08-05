@@ -89,4 +89,4 @@
 
 ;;OCaml mode
 (load
-   "/home/dawn/.opam/system/share/emacs/site-lisp/tuareg-site-file")
+   "~/.opam/system/share/emacs/site-lisp/tuareg-site-file")
