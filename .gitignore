@@ -1,2 +1,4 @@
 #File types to ignore
+
+#temporary Emacs files
 *~
