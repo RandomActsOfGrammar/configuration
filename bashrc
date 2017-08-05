@@ -121,6 +121,11 @@ source ~/.aliases
 PATH=$PATH:~/teyjus:~/abella:~/shellscripts
 EDITOR="usr/bin/emacs"
 
+#pull the configuration directory to have synced files up-to-date always
+#  (only problem is this is one of them, so changes might not take effect
+#    until the next time)
+git -C ~/configuration pull --quiet
+
 #setting up rainbow-rotating of prompt
 PROMPT_COMMAND='source PS1_rotater'
 PS1_TEXT='\A : \W |-: ' #old was "\h : \W |-: "
