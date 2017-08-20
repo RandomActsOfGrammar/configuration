@@ -49,8 +49,12 @@
 ;;resize horizontally because it doesn't let you use a mouse
 (global-set-key (kbd "<C-left>") 'shrink-window-horizontally)
 (global-set-key (kbd "<C-right>") 'enlarge-window-horizontally)
+;;resize vertically to make it easier
+(global-set-key (kbd "<C-up>") 'enlarge-window)
+(global-set-key (kbd "<C-down>") 'shrink-window)
 
-;;Limit width of lines in text mode--automatically shortens when you hit <enter> or do a <space>
+;;Limit width of lines in text mode--automatically shortens when you hit
+;;    <enter> or do a <space>
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
 
 
