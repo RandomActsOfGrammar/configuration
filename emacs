@@ -57,6 +57,9 @@
 ;;    <enter> or do a <space>
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
 
+;;tabs are spaces
+(setq-default indent-tabs-mode nil)
+
 
 ;;Open .v files with Proof General's Coq mode
 (load "~/.emacs.d/lisp/PG/generic/proof-site")
