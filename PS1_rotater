@@ -12,6 +12,7 @@
 #                       transparent (disappears)                8
 #                       strikethrough                           9
 START_COLOR=31
+BAD_COLORS=( )
 END_COLOR=37
 START_STYLE=0
 BAD_STYLES=("5" "6" "8")
@@ -41,16 +42,19 @@ fi
 #carry out rotation, skipping bad numbers
 #color rotation
 CURRENT_PROMPT_COLOR_NUM=$((CURRENT_PROMPT_COLOR_NUM + 1))
+while member $CURRENT_PROMPT_COLOR_NUM BAD_COLORS ; do
+    CURRENT_PROMPT_COLOR_NUM=$((CURRENT_PROMPT_COLOR_NUM+1))
+done
 if [ $CURRENT_PROMPT_COLOR_NUM == $((END_COLOR + 1)) ]; then #beyond colors
     CURRENT_PROMPT_COLOR_NUM=$START_COLOR
     #style rotation
     CURRENT_PROMPT_TEXT_NUM=$((CURRENT_PROMPT_TEXT_NUM + 1))
+    while member $CURRENT_PROMPT_TEXT_NUM BAD_STYLES ; do
+        CURRENT_PROMPT_TEXT_NUM=$((CURRENT_PROMPT_TEXT_NUM + 1))
+    done
     if [ $CURRENT_PROMPT_TEXT_NUM == $((END_STYLE + 1)) ]; then #beyond options
         CURRENT_PROMPT_TEXT_NUM=$START_STYLE
     fi
-    while  member $CURRENT_PROMPT_TEXT_NUM BAD_STYLES ; do
-        CURRENT_PROMPT_TEXT_NUM=$((CURRENT_PROMPT_TEXT_NUM + 1))
-    done
 fi
 
 export CURRENT_PROMPT_COLOR_NUM
