@@ -11,51 +11,116 @@
 #                            words terminal background color
 #                       transparent (disappears)                8
 #                       strikethrough                           9
-START_COLOR=31
-BAD_COLORS=( )
+START_COLOR=30
+BAD_COLORS=( "30" )
 END_COLOR=37
+COLOR_CHANCE_OF_INCLUSION=2 #chance of including each color is
+                            # 1/COLOR_CHANCE_OF_INCLUSION
+
 START_STYLE=0
 BAD_STYLES=("5" "6" "8")
 END_STYLE=9
+STYLE_CHANCE_OF_INCLUSION=2 #chance of including each style is
+                            # 1/STYLE_CHANCE_OF_INCLUSION
 
+#if DO_FULL_RANGE is 0, it will include all colors and styles in range between
+#  the respective start and end variables and not in the bad lists
+#the chance of it being 0 is 1/DO_FULL_RANGE_CHANCE
+DO_FULL_RANGE_CHANCE=3
+DO_FULL_RANGE=$((RANDOM % DO_FULL_RANGE_CHANCE))
+
+
+#check if first argument is in the array of the second argument
+# call example: if [ member $color array_name ] ; then
 member() {
     search_item=$1
     arr_name=$2[@]
     array=("${!arr_name}")
     for item in "${array[@]}"; do
-        if [ $search_item == $item ]; then
+        if [ "$search_item" == "$item" ]; then
             return 0
         fi
     done
     return 1
 }
 
+#find and return the next value from the array (circles back to beginning)
+# call example: var=$(find_in_array $color array_name)
+find_in_array() {
+    search_item=$1
+    arr_name=$2[@]
+    array=("${!arr_name}")
+    arr_length=${#array[@]}
+    i=0
+    for item in "${array[@]}" ; do
+        if [ "$item" = "$search_item" ] ; then
+            echo ${array[$(( (i + 1)%arr_length ))]} #equivalent of return here
+        fi
+        i=$((i + 1))
+    done
+}
+
+#create a list of colors that randomly includes the differet colors
+if [ -z $COLORS_FOR_THIS_TERM ]; then
+    COLORS_FOR_THIS_TERM=()
+    ALL_COLORS=()
+    COUNTER=$START_COLOR
+    while [ "$COUNTER" -le "$END_COLOR" ]; do
+        if ! member $COUNTER BAD_COLORS ; then
+            ALL_COLORS+=($COUNTER)
+            include_color=$((RANDOM % COLOR_CHANCE_OF_INCLUSION))
+            if [ "$DO_FULL_RANGE" == "0" ] || [ "$include_color" -eq 1 ] ; then
+                COLORS_FOR_THIS_TERM+=($COUNTER)
+            fi
+        fi
+        COUNTER=$((COUNTER + 1))
+    done
+    if [ ${#COLORS_FOR_THIS_TERM[@]} -eq 0 ] ; then
+        COLORS_FOR_THIS_TERM=(${ALL_COLORS[$((RANDOM%${#ALL_COLORS[@]}))]})
+    fi
+fi
+
+#create a list of styles that randomly includes the differet styles
+if [ -z $STYLES_FOR_THIS_TERM ]; then
+    STYLES_FOR_THIS_TERM=()
+    ALL_STYLES=()
+    COUNTER=$START_STYLE
+    while [ $COUNTER -le $END_STYLE ]; do
+        if ! member $COUNTER BAD_STYLES ; then
+            ALL_STYLES+=($COUNTER)
+            include_style=$((RANDOM % STYLE_CHANCE_OF_INCLUSION))
+            if [ "$DO_FULL_RANGE" == "0" ] || [ "$include_style" -eq 1 ] ; then
+                STYLES_FOR_THIS_TERM+=($COUNTER)
+            fi
+        fi
+        COUNTER=$((COUNTER + 1))
+    done
+    if [ ${#STYLES_FOR_THIS_TERM[@]} -eq 0 ] ; then
+        STYLES_FOR_THIS_TERM=(${ALL_STYLES[$((RANDOM%${#ALL_STYLES[@]}))]})
+    fi
+fi
+
+
 #set numbers at end to start at beginning with first one
 if [ -z $CURRENT_PROMPT_COLOR_NUM ]; then
-    CURRENT_PROMPT_COLOR_NUM=$END_COLOR
+    length=${#COLORS_FOR_THIS_TERM[@]}
+    CURRENT_PROMPT_COLOR_NUM=${COLORS_FOR_THIS_TERM[$((length - 1))]}
 fi
 
 if [ -z $CURRENT_PROMPT_TEXT_NUM ]; then
-    CURRENT_PROMPT_TEXT_NUM=$END_STYLE
+    length=${#STYLES_FOR_THIS_TERM[@]}
+    CURRENT_PROMPT_TEXT_NUM=${STYLES_FOR_THIS_TERM[$((length - 1))]}
 fi
 
 #carry out rotation, skipping bad numbers
 #color rotation
-CURRENT_PROMPT_COLOR_NUM=$((CURRENT_PROMPT_COLOR_NUM + 1))
-while member $CURRENT_PROMPT_COLOR_NUM BAD_COLORS ; do
-    CURRENT_PROMPT_COLOR_NUM=$((CURRENT_PROMPT_COLOR_NUM+1))
-done
-if [ $CURRENT_PROMPT_COLOR_NUM == $((END_COLOR + 1)) ]; then #beyond colors
-    CURRENT_PROMPT_COLOR_NUM=$START_COLOR
+CURRENT_PROMPT_COLOR_NUM=$(find_in_array $CURRENT_PROMPT_COLOR_NUM COLORS_FOR_THIS_TERM)
+if [[ $CURRENT_PROMPT_COLOR_NUM = ${COLORS_FOR_THIS_TERM[0]} ]]; then #gone through all colors
     #style rotation
-    CURRENT_PROMPT_TEXT_NUM=$((CURRENT_PROMPT_TEXT_NUM + 1))
-    while member $CURRENT_PROMPT_TEXT_NUM BAD_STYLES ; do
-        CURRENT_PROMPT_TEXT_NUM=$((CURRENT_PROMPT_TEXT_NUM + 1))
-    done
-    if [ $CURRENT_PROMPT_TEXT_NUM == $((END_STYLE + 1)) ]; then #beyond options
-        CURRENT_PROMPT_TEXT_NUM=$START_STYLE
-    fi
+    CURRENT_PROMPT_TEXT_NUM=$(find_in_array $CURRENT_PROMPT_TEXT_NUM STYLES_FOR_THIS_TERM)
 fi
 
+export COLORS_FOR_THIS_TERM
+export STYLES_FOR_THIS_TERM
 export CURRENT_PROMPT_COLOR_NUM
 export CURRENT_PROMPT_TEXT_NUM
