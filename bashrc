@@ -129,4 +129,4 @@ git -C ~/configuration pull --quiet
 #setting up rainbow-rotating of prompt
 PROMPT_COMMAND='source PS1_rotater'
 PS1_TEXT='\A : \W |-: ' #old was "\h : \W |-: "
-PS1='\e[${CURRENT_PROMPT_TEXT_NUM};${CURRENT_PROMPT_COLOR_NUM}m'$PS1_TEXT'\e[m'
+PS1='\[\e[${CURRENT_PROMPT_TEXT_NUM};${CURRENT_PROMPT_COLOR_NUM}m\]'$PS1_TEXT'\[\e[m\]'
