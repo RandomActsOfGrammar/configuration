@@ -49,7 +49,7 @@
 ;;resize horizontally because it doesn't let you use a mouse
 (global-set-key (kbd "<C-left>") 'shrink-window-horizontally)
 (global-set-key (kbd "<C-right>") 'enlarge-window-horizontally)
-;;resize vertically to make it easier
+;;resize vertically to make it easier (overwrites something I never used)
 (global-set-key (kbd "<C-up>") 'enlarge-window)
 (global-set-key (kbd "<C-down>") 'shrink-window)
 
@@ -60,6 +60,9 @@
 ;;tabs are spaces
 (setq-default indent-tabs-mode nil)
 
+
+;;opening *.m will put it into Octave(Matlab) mode
+(add-to-list 'auto-mode-alist '("\\.m$" . octave-mode))
 
 ;;Open .v files with Proof General's Coq mode
 (load "~/.emacs.d/lisp/PG/generic/proof-site")
