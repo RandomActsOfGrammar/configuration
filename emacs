@@ -44,7 +44,7 @@
 (global-set-key (kbd "C-c C-t") 'transparency)
 
 ;;change title to match buffer title
-(setq frame-title-format "%b")
+(setq frame-title-format "%b : %f")
 
 ;;resize horizontally because it doesn't let you use a mouse
 (global-set-key (kbd "<C-left>") 'shrink-window-horizontally)
