@@ -46,6 +46,9 @@
 ;;change title to match buffer title
 (setq frame-title-format "%b : %f")
 
+;;turn on column number mode automatically
+(column-number-mode)
+
 ;;resize horizontally because it doesn't let you use a mouse
 (global-set-key (kbd "<C-left>") 'shrink-window-horizontally)
 (global-set-key (kbd "<C-right>") 'enlarge-window-horizontally)
