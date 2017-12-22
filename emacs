@@ -67,6 +67,9 @@
 ;;opening *.m will put it into Octave(Matlab) mode
 (add-to-list 'auto-mode-alist '("\\.m$" . octave-mode))
 
+;;major mode for editing Silver grammars
+(load "~/configuration/silver-mode.el")
+
 ;;Open .v files with Proof General's Coq mode
 (load "~/.emacs.d/lisp/PG/generic/proof-site")
 
