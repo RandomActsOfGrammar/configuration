@@ -77,7 +77,8 @@
 
    ;; Strings
    ;; "string", 'string', /regex/
-   ;; TODO need to add including backslash-escaped characters
+   ;; TODO need to add including backslash-escaped characters in all
+   ;; TODO not recognize strings that start inside comments
    (cons "\\(\"[^\"]*\"\\)\\|\\('[^']*'\\)\\|\\(/[^/]*/\\)"
          font-lock-string-face)
 
@@ -91,21 +92,29 @@
    ;; Builtin functions
    ;; really not sure about "nothing" at this time--might just be defined
    ;;    in grammar I was looking at?
-   (cons (make-regex "print" "just" "nothing")
+   ;; left/right for associativity of terminals--they feel less like keywords
+   ;;    to me than the other things
+   (cons (make-regex "print" "left" "right" "toInt" "just" "nothing")
          font-lock-builtin-face)
 
    ;; Keywords
+   ;; TODO add "forwards to", change so "occurs on", "submits to" are
+   ;;    in here as those specific phrases--"of" is also part of a two-word
+   ;;    phrase
    (cons (make-regex  "synthesized" "attribute" "nonterminal" "inherited"
                       "production" "with" "case" "end" "if" "then" "else"
                       "function" "return" "decorate" "local" "closed"
-                      "concrete" "terminal" "ignore" "abstract")
+                      "concrete" "terminal" "ignore" "abstract" "lexer"
+                      "classes" "submits" "to" "parser" "aspect" "association"
+                      "precedence" "dominates" "import" "of")
          font-lock-keyword-face)))
 
 
 ;; search through for types
 ;; TODO should add [Type] and (Type ::= stuff), but that is not simple
-;; TODO can apparently have lowercase type variables (if true, need to change
-;;                                                   silver-vars-match as well)
+;; TODO can apparently have lowercase type variables? (if true, need to change
+;;                                                    silver-vars-match as well)
+;; TODO "nonterminal Type"
 (defun silver-type-match (limit)
   (let ((pos (point)))
     (when (re-search-forward  ":: ?\\([A-Z]\\)" limit t)
@@ -136,7 +145,13 @@
                   t)
                  (t nil))))
         (t nil)))
+;; This currently grabs lines with -- first, which is a problem for comments
+;;    beginning with {--      TODO
 (defun silver-comment-match (limit)
   (if (re-search-forward "--.*$" limit t)
       t
     (silver-comment-match-block limit)))
+
+
+;;;;;; TODO
+;;;;;;;; Indentation (two spaces within braces) (currently getting ~5)
