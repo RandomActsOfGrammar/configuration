@@ -77,10 +77,23 @@
 
    ;; Strings
    ;; "string", 'string', /regex/
-   ;; TODO need to add including backslash-escaped characters in all
-   ;; TODO not recognize strings that start inside comments
-   (cons "\\(\"[^\"]*\"\\)\\|\\('[^']*'\\)\\|\\(/[^/]*/\\)"
-         font-lock-string-face)
+   ;; TODO not recognize strings that start inside comments--may need to be done
+   ;;        on comment portion
+   (cons
+    ;;regex is a copy for each delimiter
+    ;;opener ( ((not (opener or newline)) or (backslash opener))
+    ;;          (not (newline or backslash)) ) optional opener
+    ;;matches single-line strings with backslash-escaped quotes/slashes
+    (concat "\\(" ;;start double quote group
+            "\"\\(\\([^\"\n]\\|\\(\\\\\"\\)\\)*[^\n\\\\]\\)?\""
+            "\\)" "\\|" ;;end double quote group; or separator
+            "\\(" ;;start single quote group
+            "'\\(\\([^'\n]\\|\\(\\\\'\\)\\)*[^\n\\\\]\\)?'"
+            "\\)" "\\|" ;;end single quote group; or separator
+            "\\(" ;;start forward slash group
+            "/\\(\\([^/\n]\\|\\(\\\\/\\)\\)*[^\n\\\\]\\)?/"
+            "\\)") ;;end forward slash group
+    font-lock-string-face)
 
    ;; Types
    ;; come after two colons and start with a capital letter--also other places?
@@ -90,23 +103,24 @@
    (cons (make-regex "grammar") font-lock-function-name-face)
 
    ;; Builtin functions
-   ;; really not sure about "nothing" at this time--might just be defined
-   ;;    in grammar I was looking at?
    ;; left/right for associativity of terminals--they feel less like keywords
    ;;    to me than the other things
-   (cons (make-regex "print" "left" "right" "toInt" "just" "nothing")
+   (cons (make-regex "print" "left" "right" "toInt" "just" "nothing" "length"
+                     "head" "tail" "toString")
          font-lock-builtin-face)
 
    ;; Keywords
-   ;; TODO add "forwards to", change so "occurs on", "submits to" are
+   ;; TODO change so "forwards to", "occurs on", "submits to" are
    ;;    in here as those specific phrases--"of" is also part of a two-word
    ;;    phrase
+   ;; it would seem "let" is a keyword as well
    (cons (make-regex  "synthesized" "attribute" "nonterminal" "inherited"
                       "production" "with" "case" "end" "if" "then" "else"
                       "function" "return" "decorate" "local" "closed"
                       "concrete" "terminal" "ignore" "abstract" "lexer"
                       "classes" "submits" "to" "parser" "aspect" "association"
-                      "precedence" "dominates" "import" "of")
+                      "precedence" "dominates" "import" "of" "true" "false"
+                      "forwards" "imports" "let")
          font-lock-keyword-face)))
 
 
