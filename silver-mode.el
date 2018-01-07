@@ -68,17 +68,15 @@
 ;; words for syntax highlighting
 (defvar silver-font-lock-keywords
   (list
+   ;; Comments
+   (cons #'silver-comment-match font-lock-comment-face)
+
    ;; Variables
    ;; come before two colons; start with lowercase letters
    (cons #'silver-vars-match font-lock-variable-name-face)
 
-   ;; Comments
-   (cons #'silver-comment-match font-lock-comment-face)
-
    ;; Strings
    ;; "string", 'string', /regex/
-   ;; TODO not recognize strings that start inside comments--may need to be done
-   ;;        on comment portion
    (cons
     ;;regex is a copy for each delimiter
     ;;opener ( ((not (opener or newline)) or (backslash opener))
@@ -167,24 +165,28 @@
       nil)))
 
 
-;; stolen from
-;;    https://stackoverflow.com/questions/9452615/
-;;       emacs-is-there-a-clear-example-of-multi-line-font-locking
-;; and then modified
-(defun silver-comment-match-block (last)
-  (cond ((search-forward "{-" last t)
-         (let ((beg (match-beginning 0)))
-           (cond ((search-forward-regexp "-}" last t)
-                  (set-match-data (list beg (point)))
-                  t)
-                 (t nil))))
-        (t nil)))
-;; This currently grabs lines with -- first, which is a problem for comments
-;;    beginning with {--      TODO
+;;find comments, both single-line and multiline
+;;look for the start of either kind
+;;if the single line was found, true
+;;if the multiline start was found, look for the end
+;;   if the end was not found, go back to where you started and look for a
+;;        single-line comment
+;;   if the end was found, set the match data for it
+;;if neither were found, nil
 (defun silver-comment-match (limit)
-  (if (re-search-forward "--.*$" limit t)
-      t
-    (silver-comment-match-block limit)))
+  (let ( (start-regex (concat "\\(" "{-" "\\)\\|\\(" "--.*$" "\\)"))
+         (pos (point)) )
+    (if (re-search-forward start-regex limit t)
+        (if (match-beginning 2)
+            t
+          (let ( (beg (match-beginning 0)) )
+            (if (re-search-forward "-}" limit t)
+                (progn (set-match-data (list beg (point)))
+                       t)
+              (progn (goto-char pos)
+                     (re-search-forward "--.*$" limit t)))))
+      nil)))
+
 
 
 ;;;;;; TODO
