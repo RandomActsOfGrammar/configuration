@@ -120,28 +120,34 @@
                       "concrete" "terminal" "ignore" "abstract" "lexer"
                       "classes" "submits" "to" "parser" "aspect" "association"
                       "precedence" "dominates" "import" "of" "true" "false"
-                      "forwards" "imports" "let")
+                      "forwards" "imports" "let" "productions")
          font-lock-keyword-face)))
 
 
 ;; search through for types
-;; TODO should add [Type] and (Type ::= stuff), but that is not simple
-;; TODO can apparently have lowercase type variables? (if true, need to change
-;;                                                    silver-vars-match as well)
+;; TODO can apparently have lowercase type variables?
 ;; TODO "nonterminal Type"
+(defconst silver-type-name-regex
+  "\\[?[A-Z][a-zA-Z_0-9]*\\(<[a-zA-Z_0-9, ]+>\\)?\\]?"
+  "Matches types for Silver; however, being a type is context-dependent.")
 (defun silver-type-match (limit)
-  (let ((pos (point)))
-    (when (re-search-forward  ":: ?\\([A-Z]\\)" limit t)
-        (goto-char (match-beginning 1))
-        (or (re-search-forward
-             "[A-Z][a-zA-Z_0-9]*\\(<[a-zA-Z_0-9]+>\\)?" limit t)
-            (silver-type-match limit)))))
+  (let ( (full-regex (concat
+                      ; regex for types for variables
+                      "\\(:: *\\(" silver-type-name-regex "\\)\\)\\|"
+                      ; regex for function return types
+                      "\\(\\(" silver-type-name-regex "\\) *::=\\)")) )
+    (if (re-search-forward full-regex limit t)
+        (progn (goto-char (match-beginning 0))
+               (re-search-forward silver-type-name-regex))
+      nil)))
 
 
 ;; search through for variables
 (defun silver-vars-match (limit)
   (let ((pos (point)))
-    (when (re-search-forward "[a-z][a-zA-Z_0-9]* ?:: ?[A-Z]" limit t)
+    (when (re-search-forward
+           (concat "[a-z][a-zA-Z_0-9]* *:: *" silver-type-name-regex)
+           limit t)
       (goto-char (match-beginning 0))
       (or (re-search-forward "[a-z][a-zA-Z_0-9]*" limit t)
           (silver-vars-match limit)))))
