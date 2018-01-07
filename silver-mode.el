@@ -113,7 +113,6 @@
    ;; TODO change so "forwards to", "occurs on", "submits to" are
    ;;    in here as those specific phrases--"of" is also part of a two-word
    ;;    phrase
-   ;; it would seem "let" is a keyword as well
    (cons (make-regex  "synthesized" "attribute" "nonterminal" "inherited"
                       "production" "with" "case" "end" "if" "then" "else"
                       "function" "return" "decorate" "local" "closed"
@@ -125,13 +124,17 @@
 
 
 ;; search through for types
-;; TODO can apparently have lowercase type variables
-;;  samples-for-preservation/chap8_pierce/base/ConcreteSyntax.sv, line 6
 (defconst silver-type-name-regex
   "\\[?[A-Z][a-zA-Z_0-9]*\\(<[a-zA-Z_0-9, ]+>\\)?\\]?"
   "Matches types for Silver; however, being a type is context-dependent.")
+(defconst silver-tyvar-regex
+  "\\[?[a-zA-Z_0-9]+\\(<.+>\\)?\\]?"
+  "Matches types with type variables; however, they are context-dependent.")
 (defun silver-type-match (limit)
   (let ( (full-regex (concat
+                      ; regex for lowercase type variables
+                      "\\(" "[a-z][a-zA-Z_0-9]*<.*> *:: *"
+                         "\\(" silver-tyvar-regex "\\)" "\\)\\|"
                       ; regex for types for variables
                       "\\(:: *\\(" silver-type-name-regex "\\)\\)\\|"
                       ; regex for function return types
@@ -141,20 +144,27 @@
                       ; regex for "occurs on Type"
                       "\\(occurs on \\(" silver-type-name-regex "\\)\\)")) )
     (if (re-search-forward full-regex limit t)
+        (if (match-beginning 2) ;;check if there was a match for type variables
+            (progn (goto-char (match-beginning 2))
+                   (re-search-forward silver-tyvar-regex
+                                      limit t))
         (progn (goto-char (match-beginning 0))
-               (re-search-forward silver-type-name-regex))
+               (re-search-forward silver-type-name-regex)))
       nil)))
 
 
 ;; search through for variables
+(defvar silver-varname-regex "[a-z][a-zA-Z_0-9]*\\(<.*>\\)?"
+  "Matches variable names for Silver (context-dependent).")
 (defun silver-vars-match (limit)
-  (let ((pos (point)))
-    (when (re-search-forward
-           (concat "[a-z][a-zA-Z_0-9]* *:: *" silver-type-name-regex)
-           limit t)
-      (goto-char (match-beginning 0))
-      (or (re-search-forward "[a-z][a-zA-Z_0-9]*" limit t)
-          (silver-vars-match limit)))))
+  (let ( (full-regular-regex
+          (concat silver-varname-regex " *:: *"
+                  "\\(\\(" silver-type-name-regex "\\)\\|"
+                  "\\(" silver-tyvar-regex "\\)\\)")) )
+    (if (re-search-forward full-regular-regex limit t)
+        (progn (goto-char (match-beginning 0))
+               (re-search-forward silver-varname-regex))
+      nil)))
 
 
 ;; stolen from
