@@ -120,13 +120,13 @@
                       "concrete" "terminal" "ignore" "abstract" "lexer"
                       "classes" "submits" "to" "parser" "aspect" "association"
                       "precedence" "dominates" "import" "of" "true" "false"
-                      "forwards" "imports" "let" "productions")
+                      "forwards" "imports" "let" "productions" "occurs" "on")
          font-lock-keyword-face)))
 
 
 ;; search through for types
-;; TODO can apparently have lowercase type variables?
-;; TODO "nonterminal Type"
+;; TODO can apparently have lowercase type variables
+;;  samples-for-preservation/chap8_pierce/base/ConcreteSyntax.sv, line 6
 (defconst silver-type-name-regex
   "\\[?[A-Z][a-zA-Z_0-9]*\\(<[a-zA-Z_0-9, ]+>\\)?\\]?"
   "Matches types for Silver; however, being a type is context-dependent.")
@@ -135,7 +135,11 @@
                       ; regex for types for variables
                       "\\(:: *\\(" silver-type-name-regex "\\)\\)\\|"
                       ; regex for function return types
-                      "\\(\\(" silver-type-name-regex "\\) *::=\\)")) )
+                      "\\(\\(" silver-type-name-regex "\\) *::=\\)\\|"
+                      ; regex for "nonterminal Type"
+                      "\\(nonterminal \\(" silver-type-name-regex "\\)\\)\\|"
+                      ; regex for "occurs on Type"
+                      "\\(occurs on \\(" silver-type-name-regex "\\)\\)")) )
     (if (re-search-forward full-regex limit t)
         (progn (goto-char (match-beginning 0))
                (re-search-forward silver-type-name-regex))
