@@ -31,8 +31,16 @@
        '(silver-font-lock-keywords))
   (add-hook 'font-lock-extend-region-functions 'silver-font-lock-extend-region)
   (turn-on-font-lock)
+  (set (make-local-variable 'indent-line-function) 'silver-indent-line)
   (run-hooks 'silver-mode-hook))
 
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                           Syntax Highlighting                          ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; syntax table--simply makes " not be a string character to not mess with
 ;;    comment highlighting
@@ -189,5 +197,43 @@
 
 
 
-;;;;;; TODO
-;;;;;;;; Indentation (two spaces within braces) (currently getting ~5)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                               Indentation                              ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;following example in https://www.emacswiki.org/emacs/ModeTutorial#toc3
+
+;;Indentation Rules
+;;1. beginning of buffer->no indent (col 0)
+;;2. line has } at beginning->deindent to col 0
+;;3. line first has } in a line before it->deindent to col 0
+;;4. line first has { in a line before it->indent to col 2
+;;5. none of the above->col 0
+(defun silver-indent-line ()
+  "Indent current line as a Silver grammar."
+  (beginning-of-line)
+  (if (bobp) ;check for rule 1
+      (indent-line-to 0)
+    (let ( (not-indented t) cur-indent )
+      (if (looking-at "^ *-?}") ;check for rule 2
+          (indent-line-to 0)
+        (save-excursion
+          (while not-indented
+            (forward-line -1)
+            (if (looking-at ".*} *$") ;check for rule 3
+                (progn (setq cur-indent 0)
+                       (setq not-indented nil))
+              (if (looking-at "^ *{") ;check for rule 4
+                  (progn (setq cur-indent 2)
+                         (setq not-indented nil))
+                (if (bobp) ;check for rule 5
+                    (setq not-indented nil))))))
+        (if cur-indent
+            (indent-line-to cur-indent)
+          (indent-line-to 0))))))
+;; TODO not robust enough to handle multi-line comments inside of other brackets
+;; TODO might be nice to indent continuing from previous line (no semicolon
+;;           ending the line for lines that require them, indent multiline
+;;           comment on following line to match where it started before
