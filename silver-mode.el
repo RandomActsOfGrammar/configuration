@@ -102,7 +102,6 @@
     font-lock-string-face)
 
    ;; Types
-   ;; come after two colons and start with a capital letter--also other places?
    (cons #'silver-type-match font-lock-type-face)
 
    ;; Headers
@@ -131,6 +130,8 @@
 
 
 ;; search through for types
+;; TODO after "occurs on", can have multiple types
+;;       seen in silver/tutorials/dc/BetterPP.sv, line 8
 (defconst silver-type-name-regex
   "\\[?[A-Z][a-zA-Z_0-9]*\\(<[a-zA-Z_0-9, ]+>\\)?\\]?"
   "Matches types for Silver; however, being a type is context-dependent.")
@@ -238,4 +239,5 @@
 ;; TODO might be nice to indent continuing from previous line (no semicolon
 ;;           ending the line for lines that require them, indent multiline
 ;;           comment on following line to match where it started before, case
-;;           ends and bars line up with starting case
+;;           ends and bars line up with starting case, if-then-else line up,
+;;           indent continuing inside parentheses to opening parenthesis
