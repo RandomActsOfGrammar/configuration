@@ -119,6 +119,7 @@
    ;; TODO change so "forwards to", "occurs on", "submits to" are
    ;;    in here as those specific phrases--"of" is also part of a two-word
    ;;    phrase
+   ;; TODO change so underscores before and after disqualify it
    (cons (make-regex  "synthesized" "attribute" "nonterminal" "inherited"
                       "production" "with" "case" "end" "if" "then" "else"
                       "function" "return" "decorate" "local" "closed"
@@ -134,12 +135,12 @@
   "\\[?[A-Z][a-zA-Z_0-9]*\\(<[a-zA-Z_0-9, ]+>\\)?\\]?"
   "Matches types for Silver; however, being a type is context-dependent.")
 (defconst silver-tyvar-regex
-  "\\[?[a-zA-Z_0-9]+\\(<.+>\\)?\\]?"
+  "\\[?[a-zA-Z][a-zA-Z_0-9]*\\(<.+>\\)?\\]?"
   "Matches types with type variables; however, they are context-dependent.")
 (defun silver-type-match (limit)
   (let ( (full-regex (concat
                       ; regex for lowercase type variables
-                      "\\(" "[a-z][a-zA-Z_0-9]*<.*> *:: *"
+                      "\\(" silver-varname-regex "<[a-zA-Z_0-9, ]+> *:: *"
                          "\\(" silver-tyvar-regex "\\)" "\\)\\|"
                       ; regex for types for variables
                       "\\(:: *\\(" silver-type-name-regex "\\)\\)\\|"
@@ -150,8 +151,8 @@
                       ; regex for "occurs on Type"
                       "\\(occurs on \\(" silver-type-name-regex "\\)\\)")) )
     (if (re-search-forward full-regex limit t)
-        (if (match-beginning 2) ;;check if there was a match for type variables
-            (progn (goto-char (match-beginning 2))
+        (if (match-beginning 3) ;;check if there was a match for type variables
+            (progn (goto-char (match-beginning 3))
                    (re-search-forward silver-tyvar-regex
                                       limit t))
         (progn (goto-char (match-beginning 0))
@@ -160,7 +161,7 @@
 
 
 ;; search through for variables
-(defvar silver-varname-regex "[a-z][a-zA-Z_0-9]*\\(<.*>\\)?"
+(defvar silver-varname-regex "[a-z][a-zA-Z_0-9]*\\(<[a-zA-Z_0-9, ]+>\\)?"
   "Matches variable names for Silver (context-dependent).")
 (defun silver-vars-match (limit)
   (let ( (full-regular-regex
@@ -236,4 +237,5 @@
 ;; TODO not robust enough to handle multi-line comments inside of other brackets
 ;; TODO might be nice to indent continuing from previous line (no semicolon
 ;;           ending the line for lines that require them, indent multiline
-;;           comment on following line to match where it started before
+;;           comment on following line to match where it started before, case
+;;           ends and bars line up with starting case
