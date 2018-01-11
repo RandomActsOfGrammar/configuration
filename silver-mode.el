@@ -101,9 +101,6 @@
             "\\)") ;;end forward slash group
     font-lock-string-face)
 
-   ;; Types
-   (cons #'silver-type-match font-lock-type-face)
-
    ;; Headers
    (cons (make-regex "grammar") font-lock-function-name-face)
 
@@ -126,12 +123,17 @@
                       "classes" "submits" "to" "parser" "aspect" "association"
                       "precedence" "dominates" "import" "of" "true" "false"
                       "forwards" "imports" "let" "productions" "occurs" "on")
-         font-lock-keyword-face)))
+         font-lock-keyword-face)
+
+   ;; Types
+   ;; with the addition of highlighting multiple types after "occurs on",
+   ;;    when this was up farther it caused keywords to not be highlighted,
+   ;;    but that was fixed by moving it down, so it probably isn't the most
+   ;;    robust
+   (cons #'silver-type-match font-lock-type-face)))
 
 
 ;; search through for types
-;; TODO after "occurs on", can have multiple types
-;;       seen in silver/tutorials/dc/BetterPP.sv, line 8
 (defconst silver-type-name-regex
   "\\[?[A-Z][a-zA-Z_0-9]*\\(<[a-zA-Z_0-9, ]+>\\)?\\]?"
   "Matches types for Silver; however, being a type is context-dependent.")
@@ -158,6 +160,25 @@
                                       limit t))
         (progn (goto-char (match-beginning 0))
                (re-search-forward silver-type-name-regex)))
+      (silver-find-extra-types-after-occurs-on limit))))
+;; highlight multiple types after "occurs on"
+;; e.g., synthesized atttribute ast occurs on Root, Term;
+(defun silver-find-extra-types-after-occurs-on (limit)
+  (let ( (start (point)) )
+    (if (re-search-forward ";" limit)
+        (let ( (semicolon (point)) )
+          (progn (beginning-of-line)
+                 (if (looking-at ".*occurs on")
+                     (progn (re-search-forward "occurs on" semicolon)
+                            (if (< (point) start)
+                                (goto-char start)
+                              nil)
+                            (if (re-search-forward silver-type-name-regex
+                                                   semicolon)
+                                t
+                              nil))
+                   (progn (goto-char semicolon)
+                          (silver-find-extra-types-after-occurs-on limit)))))
       nil)))
 
 
