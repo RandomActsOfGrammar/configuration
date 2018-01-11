@@ -112,17 +112,19 @@
          font-lock-builtin-face)
 
    ;; Keywords
-   ;; TODO change so "forwards to", "occurs on", "submits to" are
-   ;;    in here as those specific phrases--"of" is also part of a two-word
-   ;;    phrase
-   ;; TODO change so underscores before and after disqualify it
-   (cons (make-regex  "synthesized" "attribute" "nonterminal" "inherited"
-                      "production" "with" "case" "end" "if" "then" "else"
-                      "function" "return" "decorate" "local" "closed"
-                      "concrete" "terminal" "ignore" "abstract" "lexer"
-                      "classes" "submits" "to" "parser" "aspect" "association"
-                      "precedence" "dominates" "import" "of" "true" "false"
-                      "forwards" "imports" "let" "productions" "occurs" "on")
+   ;; TODO make it only match when there is not an underscore before or after
+   (cons (make-regex "production" "productions" "occurs" "on" "nonterminal"
+                     "atttribute" "propagate" "if" "then" "else" "option"
+                     "exports" "close" "closed" "local" "global" "terminal"
+                     "concrete" "abstract" "default" "ignore" "start" "lexer"
+                     "class" "classes" "dominates" "submits" "aspect" "decorate"
+                     "autocopy" "import" "imports" "grammar" "association"
+                     "precedence" "synthesized" "inherited" "functor" "with"
+                     "as" "include" "only" "hiding" "using" "forwards" "to"
+                     "use" "syntax" "forwarding" "function" "return"
+                     ;; the ones I put here versus elsewhere
+                     "let" "attribute" "case" "end" "parser" "of" "true" "false"
+                     )
          font-lock-keyword-face)
 
    ;; Types
