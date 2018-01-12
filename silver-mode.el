@@ -1,6 +1,8 @@
 ;; Mode for editing Silver grammars
+(require 'easymenu)
+(require 'ido)
 
-(provide 'silver)
+(provide 'silver-mode)
 
 
 ;; automatically enter this mode for *.sv
@@ -10,6 +12,10 @@
 ;; if there are ever any keybindings for this mode, they will go in here
 (defvar silver-mode-map nil
   "Local keymap for Silver grammar-mode buffers.")
+(cond ((not silver-mode-map)
+       (setq silver-mode-map (make-sparse-keymap))
+       (define-key silver-mode-map "\C-c\C-p" 'silver-insert-production)
+       (define-key silver-mode-map "\C-c\C-f" 'silver-insert-function)))
 
 
 ;; hook for modifying the mode without modifying the mode
@@ -24,14 +30,21 @@
   (kill-all-local-variables)
   (setq major-mode `silver-mode)
   (setq mode-name "Silver Grammar")
+  ;;menu
+  (easy-menu-define nil silver-mode-map "Silver menu" silver-menu)
+  (easy-menu-add silver-menu)
+  ;;keybindings
   (use-local-map silver-mode-map)
+  ;;syntax highlighting
   (set-syntax-table silver-syntax-table)
   (set (make-local-variable 'font-lock-multiline) t) ;let us highlight multiline
   (set (make-local-variable 'font-lock-defaults)
        '(silver-font-lock-keywords))
   (add-hook 'font-lock-extend-region-functions 'silver-font-lock-extend-region)
   (turn-on-font-lock)
+  ;;indentation
   (set (make-local-variable 'indent-line-function) 'silver-indent-line)
+  ;;hook for user changes
   (run-hooks 'silver-mode-hook))
 
 
@@ -274,3 +287,72 @@
 ;;           comment on following line to match where it started before, case
 ;;           ends and bars line up with starting case, if-then-else line up,
 ;;           indent continuing inside parentheses to opening parenthesis)
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                   Menu                                 ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;get list of parameters for production or function
+(defun silver-get-param ()
+  (interactive)
+  (let ( (param (read-string "Parameter name, RET: ")) )
+    (if (string= param "")
+        ;;remove extra space at end of parameter line
+        (delete-backward-char 1)
+      (progn (insert (concat param "::"))
+             (insert (concat (read-string "Parameter type: ") " "))
+             (silver-get-param)))))
+
+;;insert a production, with the name, referring name, parameters, and braces
+(defun silver-insert-production ()
+  (interactive)
+  ;;type of production
+  (let ( (start (concat
+                 (ido-completing-read "Type of production: "
+                                      '("concrete" "abstract" "aspect"))
+                 " production ")) )
+    (insert start))
+  ;;name of production
+  (let ( (name (concat (read-string "Name of production: ") "\n")) )
+    (insert name))
+  ;;name for production
+  (let ( (ref-name (concat (read-string "Name used to refer to production: ")
+                           "::")) )
+    (insert ref-name))
+  ;;type of production
+  (let ( (prod-type (concat (read-string "Type of production: ") " ::= ")) )
+    (insert prod-type))
+  ;;parameters
+  (silver-get-param)
+  ;;add braces
+  (insert "\n{\n\n}")
+  (forward-line -1)
+  (silver-indent-line))
+
+;;insert a function, with the name, referring name, parameters, and braces
+(defun silver-insert-function ()
+  (interactive)
+  ;;type of function
+  (insert "function ")
+  ;;name of function
+  (let ( (name (concat (read-string "Name of function: ") "\n")) )
+    (insert name))
+  ;;return type of function
+  (let ( (ret-type (read-string "Return type of function: ")) )
+    (insert (concat ret-type " ::= ")))
+  ;;parameters
+  (silver-get-param)
+  ;;add braces
+  (insert "\n{\n\n}")
+  (forward-line -1)
+  (silver-indent-line))
+
+;;menu for silver functions
+(defvar silver-menu
+  '("Silver"
+    ["Insert production skeleton"    silver-insert-production    t]
+    ["Insert function skeleton"      silver-insert-function      t]))
