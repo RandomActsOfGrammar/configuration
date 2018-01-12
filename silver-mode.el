@@ -102,7 +102,9 @@
     font-lock-string-face)
 
    ;; Headers
-   (cons (make-regex "grammar") font-lock-function-name-face)
+   (cons "grammar" font-lock-function-name-face)
+   ;; TODO add highlighting in function name face to names of productions
+   ;;       and functions
 
    ;; Builtin functions
    ;; left/right for associativity of terminals--they feel less like keywords
@@ -118,11 +120,11 @@
                      "exports" "close" "closed" "local" "global" "terminal"
                      "concrete" "abstract" "default" "ignore" "start" "lexer"
                      "class" "classes" "dominates" "submits" "aspect" "decorate"
-                     "autocopy" "import" "imports" "grammar" "association"
+                     "autocopy" "import" "imports" "association"
                      "precedence" "synthesized" "inherited" "functor" "with"
                      "as" "include" "only" "hiding" "using" "forwards" "to"
                      "use" "syntax" "forwarding" "function" "return"
-                     ;; the ones I put here versus elsewhere
+                     ;; the ones I put here that they put elsewhere
                      "let" "attribute" "case" "end" "parser" "of" "true" "false"
                      )
          font-lock-keyword-face)
@@ -232,9 +234,10 @@
 
 ;;Indentation Rules
 ;;1. beginning of buffer->no indent (col 0)
-;;2. line has } at beginning->deindent to col 0
-;;3. line first has } in a line before it->deindent to col 0
-;;4. line first has { in a line before it->indent to col 2
+;;2. line has } at beginning->deindent to (previous line's level - 2)
+;;      --breaks if we have {.*} all on one line
+;;3. line first has } in a line before it->same as that line
+;;4. line first has { in a line before it->indent to (that level + 2)
 ;;5. none of the above->col 0
 (defun silver-indent-line ()
   "Indent current line as a Silver grammar."
@@ -243,24 +246,31 @@
       (indent-line-to 0)
     (let ( (not-indented t) cur-indent )
       (if (looking-at "^ *-?}") ;check for rule 2
-          (indent-line-to 0)
+          ;;(indent-line-to 0)
+          (progn (save-excursion
+                   (progn (forward-line -1)
+                          (setq cur-indent (- (current-indentation) 2))))
+                 (if (< cur-indent 0)
+                     (indent-line-to 0)
+                   (indent-line-to cur-indent)))
         (save-excursion
           (while not-indented
             (forward-line -1)
             (if (looking-at ".*} *$") ;check for rule 3
-                (progn (setq cur-indent 0)
+                (progn (setq cur-indent (current-indentation))
                        (setq not-indented nil))
               (if (looking-at "^ *{") ;check for rule 4
-                  (progn (setq cur-indent 2)
+                  (progn (setq cur-indent (+ (current-indentation) 2))
                          (setq not-indented nil))
                 (if (bobp) ;check for rule 5
                     (setq not-indented nil))))))
         (if cur-indent
-            (indent-line-to cur-indent)
+            (if (< cur-indent 0)
+                (indent-line-to 0)
+              (indent-line-to cur-indent))
           (indent-line-to 0))))))
-;; TODO not robust enough to handle multi-line comments inside of other brackets
 ;; TODO might be nice to indent continuing from previous line (no semicolon
 ;;           ending the line for lines that require them, indent multiline
 ;;           comment on following line to match where it started before, case
 ;;           ends and bars line up with starting case, if-then-else line up,
-;;           indent continuing inside parentheses to opening parenthesis
+;;           indent continuing inside parentheses to opening parenthesis)
