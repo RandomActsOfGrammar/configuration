@@ -15,7 +15,10 @@
 (cond ((not silver-mode-map)
        (setq silver-mode-map (make-sparse-keymap))
        (define-key silver-mode-map "\C-c\C-p" 'silver-insert-production)
-       (define-key silver-mode-map "\C-c\C-f" 'silver-insert-function)))
+       (define-key silver-mode-map "\C-c\C-f" 'silver-insert-function)
+       (define-key silver-mode-map "\C-c\C-c" 'silver-compile)
+       (define-key silver-mode-map "\C-c\C-n" 'silver-next-error)
+       (define-key silver-mode-map "\C-c\C-v" 'silver-prev-error)))
 
 
 ;; hook for modifying the mode without modifying the mode
@@ -296,6 +299,10 @@
 ;;;;                                   Menu                                 ;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; generally things to make it a little easier to use
+;; includes inserting skeletons for functions and productions and
+;;    in-Emacs compilation
+
 ;;get list of parameters for production or function
 (defun silver-get-param ()
   (interactive)
@@ -354,5 +361,99 @@
 ;;menu for silver functions
 (defvar silver-menu
   '("Silver"
+    ["Compile the current grammar"   silver-compile              t]
+    ["Show next error"               silver-next-error           t]
+    ["Show previous error"           silver-prev-error           t]
     ["Insert production skeleton"    silver-insert-production    t]
     ["Insert function skeleton"      silver-insert-function      t]))
+
+
+;;all this compilation stuff stolen from the mode for Teyjus and modified
+
+;; Location of last error message
+(defvar silver-last-error nil)
+
+;; Regular expression for errors/Warnings
+(defvar silver-error-regexp
+  "^\\(.+\\):\\([0-9]+\\):\\([0-9]+\\): \\(error\\)\\|\\(warning\\)")
+
+;; Function to find the next error in the *silver* buffer,
+;; split the window, and goto the line in the program with
+;; the error.
+(defun silver-next-error ()
+  (interactive)
+  (set-buffer "*silver*")
+  (condition-case nil
+      (progn
+        (if silver-last-error
+            (progn (goto-char silver-last-error)
+                   (end-of-line))
+          (goto-char (point-min)))
+        (re-search-forward silver-error-regexp)
+        (setq silver-last-error (point))
+        (silver-show-error))
+      (error (message "No more errors"))))
+
+;; Function to find the previous error in the *silver* buffer,
+;; split the window, and goto the line in the program with
+;; the error.
+(defun silver-prev-error ()
+  (interactive)
+  (set-buffer "*silver*")
+  (condition-case ()
+      (progn
+        (if silver-last-error
+            (progn (goto-char silver-last-error)
+                   (beginning-of-line)))
+        (re-search-backward silver-error-regexp)
+        (setq silver-last-error (point))
+        (silver-show-error))
+    (error (message "No more errors"))))
+
+;; Pop up the file with the error and go to the location of the error.
+(defun silver-show-error ()
+  (interactive)
+  (delete-other-windows)
+  (let ((filename
+         (buffer-substring (match-beginning 1) (match-end 1)))
+        (line-number
+         (string-to-int
+          (buffer-substring (match-beginning 2) (match-end 2))))
+        (column-number
+         (string-to-int
+          (buffer-substring (match-beginning 3) (match-end 3)))))
+    (switch-to-buffer (find-file-noselect filename))
+    (goto-line line-number)
+    (goto-char (+ (point) column-number))
+    (set-window-buffer (split-window) "*silver*")))
+
+;;heavily modified from its Teyjus counterpart
+(defun silver-compile ()
+  "Compile the current grammar with Silver"
+  (interactive)
+  (let ( (module (silver-get-grammar-name))
+         (dirs (file-name-directory (buffer-file-name (current-buffer)))) )
+    (let ( (loc (silver-get-location dirs
+                                     (replace-regexp-in-string ":" "/" module)
+                                     0)) )
+      (if (get-buffer "*silver*") (kill-buffer "*silver*"))
+      (setq silver-last-error nil)
+      (delete-other-windows)
+      (set-window-buffer (split-window)
+                         (make-comint "silver" "silver" nil "-I" loc module)))))
+;; find the location of the grammar to pass to silver
+(defun silver-get-location (string-to-match grammar-dirs start)
+  (if (string-match grammar-dirs string-to-match start)
+      (let ( (m-start (match-beginning 0)) (m-end (match-end 0)) )
+        (let ( (ret (silver-get-location string-to-match grammar-dirs m-end)) )
+          (if ret
+              ret
+            (substring string-to-match 0 m-start)))) ;;might me m-start - 1
+    nil))
+;; find name of grammar to compile
+(defun silver-get-grammar-name ()
+  (save-excursion
+    (goto-line 1)
+    (if (re-search-forward "grammar *\\([^ ;]+\\)[ ;]" (point-max))
+        (buffer-substring (match-beginning 1) (match-end 1))
+      nil)))
