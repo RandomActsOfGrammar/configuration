@@ -22,6 +22,15 @@
  '(font-lock-variable-name-face ((t (:foreground "LightGoldenrod"))))
  '(proof-locked-face ((t (:background "gray22")))))
 
+;;set it so the background isn't black in the terminal while the other colors
+;;   remain the same("nothing" just needs to be an undefined color)
+;;stolen from https://stackoverflow.com/questions/19054228/
+;;                              emacs-disable-theme-background-color-in-terminal
+(defun on-after-init ()
+  (unless (display-graphic-p (selected-frame))
+    (set-face-background 'default "nothing" (selected-frame))))
+(add-hook 'window-setup-hook 'on-after-init)
+
 ;;Trying to make it transparent--https://www.emacswiki.org/emacs/TransparentEmacs
 ;;(set-frame-parameter (selected-frame) 'alpha '(<active> [<inactive>]))
 (set-frame-parameter (selected-frame) 'alpha '(75 50))
