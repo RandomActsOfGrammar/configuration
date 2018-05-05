@@ -310,9 +310,12 @@
     (if (string= param "")
         ;;remove extra space at end of parameter line
         (delete-backward-char 1)
-      (progn (insert (concat param "::"))
-             (insert (concat (read-string "Parameter type: ") " "))
-             (silver-get-param)))))
+      (progn
+        (let ( (param-type (read-string "Parameter type: ")) )
+          (if (string= param-type "")
+              (insert (concat param " "))
+            (insert (concat param (concat "::" (concat param-type " "))))))
+        (silver-get-param)))))
 
 ;;insert a production, with the name, referring name, parameters, and braces
 (defun silver-insert-production ()
