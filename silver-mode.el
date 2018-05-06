@@ -252,9 +252,11 @@
 ;;1. beginning of buffer->no indent (col 0)
 ;;2. line has } at beginning->deindent to (previous line's level - 2)
 ;;      --breaks if we have {.*} all on one line
-;;3. line first has } in a line before it->same as that line
-;;4. line first has { in a line before it->indent to (that level + 2)
-;;5. none of the above->col 0
+;;3. line starts with then->align with if from a previous line
+;;4. line starts with else->align with then from a previous line
+;;5. line first has } in a line before it->same as that line
+;;6. line first has { in a line before it->indent to (that level + 2)
+;;7. none of the above->col 0
 (defun silver-indent-line ()
   "Indent current line as a Silver grammar."
   (beginning-of-line)
@@ -269,22 +271,36 @@
                  (if (< cur-indent 0)
                      (indent-line-to 0)
                    (indent-line-to cur-indent)))
-        (save-excursion
-          (while not-indented
-            (forward-line -1)
-            (if (looking-at ".*} *$") ;check for rule 3
-                (progn (setq cur-indent (current-indentation))
-                       (setq not-indented nil))
-              (if (looking-at "^ *{") ;check for rule 4
-                  (progn (setq cur-indent (+ (current-indentation) 2))
+        (if (looking-at "^ *then ") ;check for rule 3
+            (progn (save-excursion
+                     (search-backward " if ")
+                     (setq not-indented nil)
+                       ;need to add one because goes to beginning of word minus a space
+                       (setq cur-indent (+ (current-column) 1)))
+                   (indent-line-to cur-indent))
+          (if (looking-at "^ *else ") ;check for rule 4
+              (progn (save-excursion
+                       (search-backward " then ")
+                       (setq not-indented nil)
+                       ;need to add one because goes to beginning of word minus a space
+                       (setq cur-indent (+ (current-column) 1)))
+                     (indent-line-to cur-indent))
+          (save-excursion
+            (while not-indented
+              (forward-line -1)
+              (if (looking-at ".*} *$") ;check for rule 5
+                  (progn (setq cur-indent (current-indentation))
                          (setq not-indented nil))
-                (if (bobp) ;check for rule 5
-                    (setq not-indented nil))))))
-        (if cur-indent
-            (if (< cur-indent 0)
-                (indent-line-to 0)
-              (indent-line-to cur-indent))
-          (indent-line-to 0))))))
+                (if (looking-at "^ *{") ;check for rule 6
+                    (progn (setq cur-indent (+ (current-indentation) 2))
+                           (setq not-indented nil))
+                  (if (bobp) ;check for rule 7
+                      (setq not-indented nil))))))
+          (if cur-indent
+              (if (< cur-indent 0)
+                  (indent-line-to 0)
+                (indent-line-to cur-indent))
+            (indent-line-to 0))))))))
 ;; TODO might be nice to indent continuing from previous line (no semicolon
 ;;           ending the line for lines that require them, indent multiline
 ;;           comment on following line to match where it started before, case
