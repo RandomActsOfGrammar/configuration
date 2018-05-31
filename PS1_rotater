@@ -14,7 +14,7 @@
 START_COLOR=30
 BAD_COLORS=( "30" )
 END_COLOR=37
-COLOR_CHANCE_OF_INCLUSION=2 #chance of including each color is
+COLOR_CHANCE_OF_INCLUSION=3 #chance of including each color is
                             # 1/COLOR_CHANCE_OF_INCLUSION
 
 START_STYLE=0
@@ -124,3 +124,32 @@ export COLORS_FOR_THIS_TERM
 export STYLES_FOR_THIS_TERM
 export CURRENT_PROMPT_COLOR_NUM
 export CURRENT_PROMPT_TEXT_NUM
+
+
+
+
+#create some preset color groups we can set with a function
+toPatriot(){
+    COLORS_FOR_THIS_TERM=(31 34 37)
+    CURRENT_PROMPT_COLOR_NUM=37
+}
+
+toCandyCane(){
+    COLORS_FOR_THIS_TERM=(31 37)
+    CURRENT_PROMPT_COLOR_NUM=37
+}
+
+toBlue(){
+    COLORS_FOR_THIS_TERM=(34 36 37)
+    CURRENT_PROMPT_COLOR_NUM=37
+}
+
+toChristmas(){
+    COLORS_FOR_THIS_TERM=(31 32)
+    CURRENT_PROMPT_COLOR_NUM=32
+}
+
+toSweden(){
+    COLORS_FOR_THIS_TERM=(33 34)
+    CURRENT_PROMPT_COLOR_NUM=34
+}
