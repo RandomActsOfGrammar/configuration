@@ -22,6 +22,10 @@
  '(font-lock-variable-name-face ((t (:foreground "LightGoldenrod"))))
  '(proof-locked-face ((t (:background "gray22")))))
 
+;;change the minibuffer color for when we are in a terminal
+;;the default doesn't really show up as it is dark blue
+(set-face-foreground 'minibuffer-prompt "yellow")
+
 ;;set it so the background isn't black in the terminal while the other colors
 ;;   remain the same("nothing" just needs to be an undefined color)
 ;;stolen from https://stackoverflow.com/questions/19054228/
