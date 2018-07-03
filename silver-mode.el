@@ -246,7 +246,23 @@
 ;;;;                               Indentation                              ;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;following example in https://www.emacswiki.org/emacs/ModeTutorial#toc3
+;;done by following example in https://www.emacswiki.org/emacs/ModeTutorial#toc3
+
+;;find and return the starting column of the currently-open case statement
+(defun find-matching-case ()
+  (let ( (case-found nil) (end-count 0) (case-indent 0) )
+    (save-excursion
+      (while (and (not case-found) (not (bobp)))
+        (forward-line -1)
+        (beginning-of-line)
+        (if (looking-at "^ *end[;\n ]")
+            (setq end-count (+end-count 1))
+          (if (looking-at "^ *case *.* *of")
+              (if (= end-count 0)
+                  (progn (setq case-indent (current-column))
+                         (setq case-found t))
+                (setq end-count (- end-count 1)))))))
+    case-indent))
 
 ;;Indentation Rules
 ;;1. beginning of buffer->no indent (col 0)
@@ -254,9 +270,13 @@
 ;;      --breaks if we have {.*} all on one line
 ;;3. line starts with then->align with if from a previous line
 ;;4. line starts with else->align with then from a previous line
-;;5. line first has } in a line before it->same as that line
-;;6. line first has { in a line before it->indent to (that level + 2)
-;;7. none of the above->col 0
+;;5. line is the first line after a case start->align two characters past case start
+;;6. line starts with |->align with matching case
+;;7. line is end->align with matching case
+
+;;8. line first has } in a line before it->same as that line
+;;9. line first has { in a line before it->indent to (that level + 2)
+;;10. none of the above->col 0
 (defun silver-indent-line ()
   "Indent current line as a Silver grammar."
   (beginning-of-line)
@@ -264,7 +284,6 @@
       (indent-line-to 0)
     (let ( (not-indented t) cur-indent )
       (if (looking-at "^ *-?}") ;check for rule 2
-          ;;(indent-line-to 0)
           (progn (save-excursion
                    (progn (forward-line -1)
                           (setq cur-indent (- (current-indentation) 2))))
@@ -275,37 +294,55 @@
             (progn (save-excursion
                      (search-backward " if ")
                      (setq not-indented nil)
-                       ;need to add one because goes to beginning of word minus a space
-                       (setq cur-indent (+ (current-column) 1)))
+                                        ;need to add one because goes to beginning of word minus a space
+                     (setq cur-indent (+ (current-column) 1)))
                    (indent-line-to cur-indent))
+          ;;this will break if we have nested ifs
           (if (looking-at "^ *else ") ;check for rule 4
               (progn (save-excursion
                        (search-backward " then ")
                        (setq not-indented nil)
-                       ;need to add one because goes to beginning of word minus a space
+                                        ;need to add one because goes to beginning of word minus a space
                        (setq cur-indent (+ (current-column) 1)))
                      (indent-line-to cur-indent))
-          (save-excursion
-            (while not-indented
-              (forward-line -1)
-              (if (looking-at ".*} *$") ;check for rule 5
-                  (progn (setq cur-indent (current-indentation))
-                         (setq not-indented nil))
-                (if (looking-at "^ *{") ;check for rule 6
-                    (progn (setq cur-indent (+ (current-indentation) 2))
-                           (setq not-indented nil))
-                  (if (bobp) ;check for rule 7
-                      (setq not-indented nil))))))
-          (if cur-indent
-              (if (< cur-indent 0)
-                  (indent-line-to 0)
-                (indent-line-to cur-indent))
-            (indent-line-to 0))))))))
+              (if (looking-at "^.*->")
+                  (progn
+                    (message "looking at ->")
+                    (setq cur-indent (find-matching-case))
+                    (if (looking-at "^ *|")
+                        (setq cur-indent cur-indent) ;cur-indent is already correct
+                      (setq cur-indent (+ cur-indent 1)))
+                    (setq not-indented nil)
+                    (indent-line-to cur-indent))
+                (if (looking-at "^ *end[; ]$")
+                    (progn
+                      (message "Looking at end")
+                      (setq cur-indent (find-matching-case))
+                      (setq not-indented nil)
+                      (indent-line-to cur-indent))
+                (save-excursion
+                  (message "Skipped looking-at ->")
+                  (while not-indented
+                    (forward-line -1)
+                    (if (looking-at ".*} *$") ;check for rule 8
+                        (progn (setq cur-indent (current-indentation))
+                               (setq not-indented nil))
+                      (if (looking-at "^ *{") ;check for rule 9
+                          (progn (setq cur-indent (+ (current-indentation) 2))
+                                 (setq not-indented nil))
+                        (if (bobp) ;check for rule 10
+                            (setq not-indented nil))))))
+                (if cur-indent
+                    (if (< cur-indent 0)
+                        (indent-line-to 0)
+                      (indent-line-to cur-indent))
+                  (indent-line-to 0))))))))))
 ;; TODO might be nice to indent continuing from previous line (no semicolon
 ;;           ending the line for lines that require them, indent multiline
 ;;           comment on following line to match where it started before, case
 ;;           ends and bars line up with starting case, if-then-else line up,
 ;;           indent continuing inside parentheses to opening parenthesis)
+
 
 
 
