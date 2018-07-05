@@ -87,7 +87,7 @@
 (load "~/.emacs.d/lisp/PG/generic/proof-site")
 
 ;;Include Teyjus Emacs
-(load "~/teyjus/emacs/teyjus.el")
+(load "~/programs/teyjus/emacs/teyjus.el")
 
 ;;Abella things
 (defconst proof-site-file
