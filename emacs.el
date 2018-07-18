@@ -62,6 +62,9 @@
 ;;turn on column number mode automatically
 (column-number-mode)
 
+;;stop it from beeping or flashing
+(setq ring-bell-function 'ignore)
+
 ;;resize horizontally because it doesn't let you use a mouse
 (global-set-key (kbd "<C-left>") 'shrink-window-horizontally)
 (global-set-key (kbd "<C-right>") 'enlarge-window-horizontally)
