@@ -73,8 +73,8 @@
 (global-set-key (kbd "<C-down>") 'shrink-window)
 
 ;;move the view up or down one line
-(global-set-key (kbd "<C-j>") 'scroll-down-line)
-(global-set-key (kbd "<C-o>") 'scroll-up-line)
+(global-set-key (kbd "C-o") 'scroll-down-line)
+(global-set-key (kbd "C-j") 'scroll-up-line)
 
 ;;Limit width of lines in text mode--automatically shortens when you hit
 ;;    <enter> or do a <space>
