@@ -53,7 +53,7 @@
 (defun transparency (value)
   "Sets the transparency of the frame window.  0=transparent/100=opaque"
   (interactive "nTransparency Value 0 - 100 opaque:")
-  (set-frame-parameter (selected-frame) 'alpha value))
+  (set-frame-parameter (selected-frame) 'alpha (list value value)))
 (global-set-key (kbd "C-c C-t") 'transparency)
 
 ;;change title to match buffer title
@@ -71,6 +71,10 @@
 ;;resize vertically to make it easier (overwrites something I never used)
 (global-set-key (kbd "<C-up>") 'enlarge-window)
 (global-set-key (kbd "<C-down>") 'shrink-window)
+
+;;move the view up or down one line
+(global-set-key (kbd "<C-j>") 'scroll-down-line)
+(global-set-key (kbd "<C-o>") 'scroll-up-line)
 
 ;;Limit width of lines in text mode--automatically shortens when you hit
 ;;    <enter> or do a <space>
@@ -92,7 +96,7 @@
 ;;Include Teyjus Emacs
 (load "~/programs/teyjus/emacs/teyjus.el")
 
-;;Abella things
+
 (defconst proof-site-file
   (expand-file-name "path/to/PG/generic/proof-site.el"))
 (defconst lprolog-file
