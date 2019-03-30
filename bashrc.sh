@@ -118,7 +118,7 @@ fi
 
 source ~/.aliases
 
-PATH=$PATH:~/teyjus:~/abella:~/shellscripts
+PATH=$PATH:~/teyjus:~/abella:~/shellscripts:~/configuration
 EDITOR="usr/bin/emacs"
 
 #pull the configuration directory to have synced files up-to-date always
