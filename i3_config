@@ -44,7 +44,7 @@ floating_modifier $mainmod
 
 # start a terminal
 #bindsym Mod1+Return exec i3-sensible-terminal
-bindsym --release $mainmod+t exec /usr/bin/xterm
+bindsym --release $mainmod+t exec /usr/bin/termite
 
 # kill focused window
 bindsym $mainmod+Shift+q kill
