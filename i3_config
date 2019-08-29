@@ -203,6 +203,12 @@ bindsym Control+Shift+Left move workspace to output left
 bindsym Control+Shift+Up move workspace to output up
 bindsym Control+Shift+Down move workspace to output down
 
+#focus to a different display without having to go through other windows
+bindsym $win+Right focus output right
+bindsym $win+Left focus output left
+bindsym $win+Up focus output up
+bindsym $win+Down focus output down
+
 #lock the screen on Win+L
 bindsym --release $win+l exec /usr/bin/slock
 bindsym --release $win+Shift+l exec /usr/bin/slock /usr/bin/systemctl suspend -i
@@ -210,6 +216,9 @@ bindsym --release $win+Shift+l exec /usr/bin/slock /usr/bin/systemctl suspend -i
 
 #keyboard shortcuts for common programs
 bindsym $mainmod+g exec /usr/bin/google-chrome-stable
+
+
+for_window [class="Tor"] floating enable
 
 
 #enable tap to click
