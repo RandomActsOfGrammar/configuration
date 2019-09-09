@@ -89,6 +89,9 @@
 ;;tabs are spaces
 (setq-default indent-tabs-mode nil)
 
+;;put in an equivalence sign
+(global-set-key (kbd "C-=") (lambda () (interactive) (insert "≡")))
+
 
 ;;opening *.m will put it into Octave(Matlab) mode
 (add-to-list 'auto-mode-alist '("\\.m$" . octave-mode))
