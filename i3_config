@@ -103,9 +103,6 @@ bindsym $mainmod+space focus mode_toggle
 # focus the parent container
 bindsym $mainmod+a focus parent
 
-# focus the child container
-#bindsym $mainmod+d focus child
-
 # move the currently focused window to the scratchpad
 bindsym $mainmod+Shift+minus move scratchpad
 
@@ -216,6 +213,8 @@ bindsym --release $win+Shift+l exec /usr/bin/slock /usr/bin/systemctl suspend -i
 
 #keyboard shortcuts for common programs
 bindsym $mainmod+g exec /usr/bin/google-chrome-stable
+bindsym $win+s exec /home/tux/configuration/set_screens.sh
+bindsym $win+a exec /home/tux/configuration/set_audio.sh
 
 
 for_window [class="Tor"] floating enable
@@ -271,13 +270,3 @@ bar {
     }
 }
 
-#######################################################################
-# automatically start i3-config-wizard to offer the user to create a
-# keysym-based config which used their favorite modifier (alt or windows)
-#
-# i3-config-wizard will not launch if there already is a config file
-# in ~/.i3/config.
-#
-# Please remove the following exec line:
-#######################################################################
-#exec i3-config-wizard
