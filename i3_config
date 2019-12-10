@@ -215,6 +215,7 @@ bindsym --release $win+Shift+l exec /usr/bin/slock /usr/bin/systemctl suspend -i
 bindsym $mainmod+g exec /usr/bin/google-chrome-stable
 bindsym $win+s exec /home/tux/configuration/set_screens.sh
 bindsym $win+a exec /home/tux/configuration/set_audio.sh
+bindsym $win+b exec /home/tux/bin/background.sh
 
 
 for_window [class="Tor"] floating enable
