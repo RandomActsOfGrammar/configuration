@@ -21,7 +21,7 @@
  '(font-lock-string-face ((t (:foreground "lime green"))))
  '(font-lock-type-face ((t (:foreground "deep sky blue"))))
  '(font-lock-variable-name-face ((t (:foreground "LightGoldenrod"))))
- '(proof-locked-face ((t (:background "gray22")))))
+ '(proof-locked-face ((t (:background "gray10")))))
 
 ;;change the minibuffer color for when we are in a terminal
 ;;the default doesn't really show up as it is dark blue
