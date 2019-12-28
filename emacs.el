@@ -4,6 +4,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(c-basic-offset 4)
+ ;;Proof General configuration
+ '(proof-disappearing-proofs t)
  '(proof-three-window-mode-policy (quote hybrid)))
 
 (custom-set-faces
