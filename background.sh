@@ -5,7 +5,7 @@ USE_SINGLE=0
 #what picture to use for a single image
 SINGLE_IMAGE=/home/tux/Pictures/TrumpG7.jpg
 #the directory to pull images from--must end with a slash
-IMAGE_DIRECTORY=/home/tux/OneDrive/Pictures/Tux/Christmas/
+IMAGE_DIRECTORY=/home/tux/Pictures/arch/
 #how long (seconds) to wait between changing the background picture
 SLEEP_TIME=120
 

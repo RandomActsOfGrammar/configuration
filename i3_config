@@ -215,7 +215,7 @@ bindsym --release $win+Shift+l exec /usr/bin/slock /usr/bin/systemctl suspend -i
 bindsym $mainmod+g exec /usr/bin/google-chrome-stable
 bindsym $win+s exec /home/tux/configuration/set_screens.sh
 bindsym $win+a exec /home/tux/configuration/set_audio.sh
-bindsym $win+b exec /home/tux/bin/background.sh
+bindsym $win+b exec /home/tux/configuration/background.sh
 
 
 for_window [class="Tor"] floating enable
@@ -230,11 +230,10 @@ hide_edge_borders both
 
 
 #change the background image (options in the script)
-exec_always ~/bin/background.sh
+exec_always /home/tux/configuration/background.sh
 
 
 #general colors
-#set $bg      #2f2f2f
 set $bg      #000000
 set $ac      #ff6600
 set $tx      #000000
@@ -264,7 +263,6 @@ bar {
         separator           $bl
 
         focused_workspace   $bl         $ac             $tx
-#        active_workspace    #555555     $ac             $tx
         active_workspace    $ia         $ac             $tx
         inactive_workspace  $ia         $ia_bg          $ia
         urgent_workspace    $ur_bd      $ur             $wt
