@@ -8,7 +8,7 @@ main () {
     while [ ! -z $1 ]; do
         case $1 in
             home | h )
-                top_long
+                left_long
                 argument_found=true
                 ;;
             laptop | l )
@@ -17,6 +17,10 @@ main () {
                 ;;
             apartment | apt | a )
                 right_tall
+                argument_found=true
+                ;;
+            keller | k )
+                keller6_212
                 argument_found=true
                 ;;
             -h | --help )
@@ -50,7 +54,7 @@ show_help () {
     echo "Available configuration options:"
     echo "   laptop, l:  Turn HDMI off so only the laptop screen is turned on"
     echo "   apartment, apt, a:  Set HDMI tall and to the right"
-    echo "   home, h:  Set HDMI above laptop screen"
+    echo "   home, h:  Set HDMI to the left of the laptop screen"
     echo ""
     echo "If no configuration is given:"
     echo "   HDMI connected:  Set HDMI tall and to the right"
@@ -73,10 +77,17 @@ right_tall () {
 }
 
 #long one above, like at home
-top_long () {
-    xrandr --fb 1920x1848 \
-       --output HDMI1 --mode 1920x1080 --rotate normal --pos 0x0 \
-       --output eDP1 --pos 0x1080
+left_long () {
+    xrandr --output eDP1 --primary --mode 1366x768 --pos 1920x509 --rotate normal \
+           --output HDMI1 --mode 1920x1080 --pos 0x0 --rotate normal \
+           --output VIRTUAL1 --off
+}
+
+#slightly wider and placed above
+keller6_212 () {
+    xrandr --output eDP1 --primary --mode 1366x768 --pos 0x720 --rotate normal \
+           --output HDMI1 --mode 1280x720 --pos 0x0 --rotate normal \
+           --output VIRTUAL1 --off
 }
 
 
