@@ -27,7 +27,7 @@ else
         #set IFS to newline to iterate over ls
         IFS='
 '
-        files=$(ls $IMAGE_DIRECTORY*.jpg $IMAGE_DIRECTORY*.png $IMAGE_DIRECTORY*.bmp)
+        files=$(ls $IMAGE_DIRECTORY*.jpg $IMAGE_DIRECTORY*.png $IMAGE_DIRECTORY*.bmp $IMAGE_DIRECTORY*.jpeg)
         for image in $files; do
             feh --bg-max $image
             sleep $SLEEP_TIME
