@@ -37,7 +37,7 @@ set $right semicolon
 #list can be found with Xmodmap (wiki.archlinux.org/index.php/Xmodmap)
 #Mod1 is alt
 set $mainmod Mod1
-set $win Mod4
+set $tux Mod4
 
 # use Mouse+Mod1 to drag floating windows to their wanted position
 floating_modifier $mainmod
@@ -201,21 +201,22 @@ bindsym Control+Shift+Up move workspace to output up
 bindsym Control+Shift+Down move workspace to output down
 
 #focus to a different display without having to go through other windows
-bindsym $win+Right focus output right
-bindsym $win+Left focus output left
-bindsym $win+Up focus output up
-bindsym $win+Down focus output down
+bindsym $tux+Right focus output right
+bindsym $tux+Left focus output left
+bindsym $tux+Up focus output up
+bindsym $tux+Down focus output down
 
 #lock the screen on Win+L
-bindsym --release $win+l exec /usr/bin/slock
-bindsym --release $win+Shift+l exec /usr/bin/slock /usr/bin/systemctl suspend -i
+bindsym --release $tux+l exec /usr/bin/slock
+bindsym --release $tux+Shift+l exec /usr/bin/slock /usr/bin/systemctl suspend -i
 
 
 #keyboard shortcuts for common programs
 bindsym $mainmod+g exec /usr/bin/google-chrome-stable
-bindsym $win+s exec /home/tux/configuration/set_screens.sh
-bindsym $win+a exec /home/tux/configuration/set_audio.sh
-bindsym $win+b exec /home/tux/configuration/background.sh
+bindsym $tux+s exec /home/tux/configuration/set_screens.sh
+bindsym $tux+a exec /home/tux/configuration/set_audio.sh
+bindsym $tux+b exec /home/tux/configuration/background.sh
+bindsym $tux+k exec /home/tux/configuration/set_screens.sh k
 
 
 for_window [class="Tor"] floating enable
@@ -231,6 +232,10 @@ hide_edge_borders both
 
 #change the background image (options in the script)
 exec_always /home/tux/configuration/background.sh
+
+
+#get transparency going
+#exec_always /usr/bin/picom
 
 
 #general colors

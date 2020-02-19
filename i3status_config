@@ -5,6 +5,7 @@ general {
         interval = 10
 }
 
+order += "tztime eric"
 order += "ethernet _first_"
 order += "volume master"
 order += "wireless _first_"
@@ -43,4 +44,13 @@ battery 0 {
 
 tztime local {
        format = " %Y-%m-%d %H:%M:%S "
+}
+
+tztime eric {
+        format = " Eric: %time "
+        format_time = "%H:%M"
+        #timezone is a path under /usr/share/zoneinfo/
+        #Sydney is Australia/Sydney
+        #timezone = "Australia/Sydney"
+        hide_if_equals_localtime = true
 }
