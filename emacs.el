@@ -23,7 +23,20 @@
  '(font-lock-string-face ((t (:foreground "lime green"))))
  '(font-lock-type-face ((t (:foreground "deep sky blue"))))
  '(font-lock-variable-name-face ((t (:foreground "LightGoldenrod"))))
- '(proof-locked-face ((t (:background "gray10")))))
+ '(proof-locked-face ((t (:background "gray10"))))
+ ;; Agda stuff, since they didn't decide to use normal color classes
+ '(agda2-highlight-symbol-face ((t (:inherit font-lock-string-face))))
+ '(agda2-highlight-coverage-problem-face ((t (:background "gray12" ))))
+ '(agda2-highlight-unsolved-meta-face ((t (:background "red1"))))
+ '(agda2-highlight-inductive-constructor-face ((t (:inherit font-lock-variable-name-face))))
+ '(agda2-highlight-record-face ((t (:inherit font-lock-type-face))))
+ '(agda2-highlight-field-face ((t (:inherit font-lock-variable-name-face))))
+ '(agda2-highlight-primitive-type-face ((t (:inherit font-lock-type-face))))
+ '(agda2-highlight-number-face ((nil)))
+ '(agda2-highlight-postulate-face ((t (:inherit font-lock-builtin-face))))
+ '(agda2-highlight-datatype-face ((t (:inherit font-lock-type-face))))
+ '(agda2-highlight-function-face ((t (:inherit font-lock-function-name-face))))
+ '(agda2-highlight-keyword-face ((t (:inherit font-lock-keyword-face)))))
 
 ;;change the minibuffer color for when we are in a terminal
 ;;the default doesn't really show up as it is dark blue
