@@ -142,6 +142,9 @@
                      "use" "syntax" "forwarding" "function" "return"
                      ;; the ones I put here that they put elsewhere
                      "let" "attribute" "case" "end" "parser" "of" "true" "false"
+                     ;; just for monad stuff
+                     "implicit" "restricted" "unrestricted"
+                     "Implicit" "Restricted" "Unrestricted"
                      )
          font-lock-keyword-face)
 

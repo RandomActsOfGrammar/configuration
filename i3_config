@@ -272,5 +272,8 @@ bar {
         inactive_workspace  $ia         $ia_bg          $ia
         urgent_workspace    $ur_bd      $ur             $wt
     }
+
+    #@show status icons on the laptop screen
+    tray_output primary
 }
 
