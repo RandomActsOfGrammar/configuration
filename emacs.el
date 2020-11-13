@@ -23,8 +23,16 @@
  '(font-lock-string-face ((t (:foreground "lime green"))))
  '(font-lock-type-face ((t (:foreground "deep sky blue"))))
  '(font-lock-variable-name-face ((t (:foreground "LightGoldenrod"))))
+ ;; Proof General
  '(proof-locked-face ((t (:background "gray10"))))
- ;; Agda stuff, since they didn't decide to use normal color classes
+ ;; Markdown
+ '(markdown-inline-code-face ((t (:inherit (markdown-code-face font-lock-constant-face) font-lock-constant-face nil))))
+ '(markdown-header-delimiter-face ((t (:inherit markdown-header-face))))
+ '(markdown-header-rule-face ((t (:inherit markdown-header-face))))
+ '(markdown-list-face ((t (:inherit font-lock-type-face))))
+ '(markdown-hr-face ((t (:inherit font-lock-function-name-face))))
+ '(markdown-markup-face ((t (:inherit font-lock-variable-name-face))))
+ ;; Agda
  '(agda2-highlight-symbol-face ((t (:inherit font-lock-string-face))))
  '(agda2-highlight-coverage-problem-face ((t (:background "gray12" ))))
  '(agda2-highlight-unsolved-meta-face ((t (:background "red1"))))
