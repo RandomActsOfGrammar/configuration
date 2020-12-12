@@ -26,8 +26,12 @@ STYLE_CHANCE_OF_INCLUSION=2 #chance of including each style is
 #if DO_FULL_RANGE is 0, it will include all colors and styles in range between
 #  the respective start and end variables and not in the bad lists
 #the chance of it being 0 is 1/DO_FULL_RANGE_CHANCE
-DO_FULL_RANGE_CHANCE=3
+DO_FULL_RANGE_CHANCE=10
 DO_FULL_RANGE=$((RANDOM % DO_FULL_RANGE_CHANCE))
+
+
+
+
 
 
 #check if first argument is in the array of the second argument
@@ -60,8 +64,18 @@ find_in_array() {
     done
 }
 
+#carry out rotation of colors and styles
+rotate(){
+    #color rotation
+    CURRENT_PROMPT_COLOR_NUM=$(find_in_array $CURRENT_PROMPT_COLOR_NUM COLORS_FOR_THIS_TERM)
+    if [[ $CURRENT_PROMPT_COLOR_NUM = ${COLORS_FOR_THIS_TERM[0]} ]]; then #gone through all colors
+        #style rotation
+        CURRENT_PROMPT_TEXT_NUM=$(find_in_array $CURRENT_PROMPT_TEXT_NUM STYLES_FOR_THIS_TERM)
+    fi
+}
+
 #create a list of colors that randomly includes the differet colors
-if [ -z $COLORS_FOR_THIS_TERM ]; then
+build_random_colors(){
     COLORS_FOR_THIS_TERM=()
     ALL_COLORS=()
     COUNTER=$START_COLOR
@@ -78,10 +92,10 @@ if [ -z $COLORS_FOR_THIS_TERM ]; then
     if [ ${#COLORS_FOR_THIS_TERM[@]} -eq 0 ] ; then
         COLORS_FOR_THIS_TERM=(${ALL_COLORS[$((RANDOM%${#ALL_COLORS[@]}))]})
     fi
-fi
+}
 
-#create a list of styles that randomly includes the differet styles
-if [ -z $STYLES_FOR_THIS_TERM ]; then
+#create a list of styles that randomly includes the different styles
+build_random_styles(){
     STYLES_FOR_THIS_TERM=()
     ALL_STYLES=()
     COUNTER=$START_STYLE
@@ -98,32 +112,44 @@ if [ -z $STYLES_FOR_THIS_TERM ]; then
     if [ ${#STYLES_FOR_THIS_TERM[@]} -eq 0 ] ; then
         STYLES_FOR_THIS_TERM=(${ALL_STYLES[$((RANDOM%${#ALL_STYLES[@]}))]})
     fi
-fi
+}
 
 
-#set numbers at end to start at beginning with first one
-if [ -z $CURRENT_PROMPT_COLOR_NUM ]; then
-    length=${#COLORS_FOR_THIS_TERM[@]}
-    CURRENT_PROMPT_COLOR_NUM=${COLORS_FOR_THIS_TERM[$((length - 1))]}
-fi
 
-if [ -z $CURRENT_PROMPT_TEXT_NUM ]; then
-    length=${#STYLES_FOR_THIS_TERM[@]}
-    CURRENT_PROMPT_TEXT_NUM=${STYLES_FOR_THIS_TERM[$((length - 1))]}
-fi
+main(){
+    if [ -z $COLORS_FOR_THIS_TERM ]; then
+        build_random_colors
+    fi
+    if [ -z $STYLES_FOR_THIS_TERM ]; then
+        build_random_styles
+    fi
 
-#carry out rotation, skipping bad numbers
-#color rotation
-CURRENT_PROMPT_COLOR_NUM=$(find_in_array $CURRENT_PROMPT_COLOR_NUM COLORS_FOR_THIS_TERM)
-if [[ $CURRENT_PROMPT_COLOR_NUM = ${COLORS_FOR_THIS_TERM[0]} ]]; then #gone through all colors
-    #style rotation
-    CURRENT_PROMPT_TEXT_NUM=$(find_in_array $CURRENT_PROMPT_TEXT_NUM STYLES_FOR_THIS_TERM)
-fi
+    #set numbers at end to start at beginning with first one
+    if [ -z $CURRENT_PROMPT_COLOR_NUM ]; then
+        length=${#COLORS_FOR_THIS_TERM[@]}
+        CURRENT_PROMPT_COLOR_NUM=${COLORS_FOR_THIS_TERM[$((length - 1))]}
+    fi
 
+    if [ -z $CURRENT_PROMPT_TEXT_NUM ]; then
+        length=${#STYLES_FOR_THIS_TERM[@]}
+        CURRENT_PROMPT_TEXT_NUM=${STYLES_FOR_THIS_TERM[$((length - 1))]}
+    fi
+
+    #rotate the colors and styles
+    rotate
+}
+
+
+main
+
+#export so these are kept for the duration of the term
 export COLORS_FOR_THIS_TERM
 export STYLES_FOR_THIS_TERM
 export CURRENT_PROMPT_COLOR_NUM
 export CURRENT_PROMPT_TEXT_NUM
+
+
+
 
 
 
@@ -153,3 +179,83 @@ toSweden(){
     COLORS_FOR_THIS_TERM=(33 34)
     CURRENT_PROMPT_COLOR_NUM=34
 }
+
+
+#let people pick their colors
+pickPS1Colors(){
+    COLORS_FOR_THIS_TERM=()
+    counter=$START_COLOR
+    while [ "$counter" -le "$END_COLOR" ]; do
+        if ! member $counter BAD_COLORS ; then
+            echo -e -n "\e[${counter}mThis color (Y/n)?  \e[m"
+            read yesno
+            case $yesno in
+                n*|N*)
+                    ;;
+                *)
+                    COLORS_FOR_THIS_TERM+=($counter)
+                    ;;
+            esac
+        fi
+        counter=$((counter + 1))
+    done
+    #check if they didn't choose anything
+    if [ ${#COLORS_FOR_THIS_TERM[@]} -eq 0 ] ; then
+        echo "No colors chosen; setting colors randomly"
+        build_random_colors
+    else
+        CURRENT_PROMPT_COLOR_NUM=${COLORS_FOR_THIS_TERM[$((length - 1))]}
+        CURRENT_PROMPT_TEXT_NUM=${STYLES_FOR_THIS_TERM[$((length - 1))]}
+    fi
+}
+
+#let people pick their styles
+pickPS1Styles(){
+    STYLES_FOR_THIS_TERM=()
+    counter=$START_STYLE
+    while [ "$counter" -le "$END_STYLE" ]; do
+        if ! member $counter BAD_STYLES ; then
+            echo -e -n "\e[${counter}mThis style (Y/n)?  \e[m"
+            read yesno
+            case $yesno in
+                n*|N*)
+                    ;;
+                *)
+                    STYLES_FOR_THIS_TERM+=($counter)
+                    ;;
+            esac
+        fi
+        counter=$((counter + 1))
+    done
+    #check if they didn't choose anything
+    if [ ${#STYLES_FOR_THIS_TERM[@]} -eq 0 ] ; then
+        echo "No styles chosen; setting styles randomly"
+        build_random_styles
+    else
+        CURRENT_PROMPT_COLOR_NUM=${COLORS_FOR_THIS_TERM[$((length - 1))]}
+        CURRENT_PROMPT_TEXT_NUM=${STYLES_FOR_THIS_TERM[$((length - 1))]}
+    fi
+}
+
+
+
+#for debugging:
+debugPrintColors(){
+    printf '%s\n' "${COLORS_FOR_THIS_TERM[@]}"
+}
+debugPrintStyles(){
+    printf '%s\n' "${STYLES_FOR_THIS_TERM[@]}"
+}
+debugPrintCurrentColor(){
+    echo $CURRENT_PROMPT_COLOR_NUM
+}
+debugPrintCurrentStyle(){
+    echo $CURRENT_PROMPT_STYLE_NUM
+}
+debugPrintCurrentColorIndex(){
+    echo $COLOR_INDEX
+}
+debugPrintCurrentStyleIndex(){
+    echo $STYLE_INDEX
+}
+
