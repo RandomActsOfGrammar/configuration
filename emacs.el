@@ -156,6 +156,17 @@
 (add-hook 'lprolog-mode-hook (lambda () (electric-indent-local-mode -1)))
 (add-hook 'abella-mode-hook (lambda () (electric-indent-local-mode -1)))
 
+;;Abella response mode seems to have no highlighting by default
+(font-lock-add-keywords 'abella-response-mode
+  '(("Subgoal" . font-lock-keyword-face)
+    ("Variables" . font-lock-keyword-face)
+    ("forall" . font-lock-keyword-face)
+    ("exists" . font-lock-keyword-face)
+    ("Subgoal \\(\\([0-9]+\\.*\\)+\\) is" 1 font-lock-type-face)
+    ("Subgoal .* \\(is\\)" 1 font-lock-keyword-face)
+    ("\\([-A-Za-z^=`'?$0-9_*@+#!~\/]+\\) :" 1 font-lock-type-face)
+    ("Proof completed." . font-lock-string-face)))
+
 ;;OCaml mode
 (load
    "~/.opam/system/share/emacs/site-lisp/tuareg-site-file")
