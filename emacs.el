@@ -177,8 +177,9 @@
   ;;Highlighting variable declarations
     ;;It turns out we another mechanism if we want to highlight the types in declarations and not have all variables there typed
   '(("\\(\\(forall\\)\\|\\(exists\\)\\|\\(nabla\\)\\) +\\(\\(\\([-A-Za-z^=`'?$0-9_*@+#!~\/]+ *\\)\\|\\((\\([-A-Za-z^=`'?$0-9_*@+#!~\/]+ *\\)+: *\\([^,\\.]+\\))\\) *\\)+\\) *," 5 font-lock-variable-name-face) ;;all variables bound at a quantifier
-    ("(\\([-A-Za-z^=`'?$0-9_*@+#!~\/]+ *\\)+ *: *\\([^,\\.]+\\))" 2 font-lock-type-face) ;;types declared with variables
-    ("(\\(\\([-A-Za-z^=`'?$0-9_*@+#!~\/]+ *\\)+\\) *: *\\([^,\\.]+\\))" 1 font-lock-variable-name-face) ;;variables declared (or used) with types
+    ;;These two lines cause it to crash if there are too many characters in a comment between opening and closing paretheses for some reason
+    ;("(\\([-A-Za-z^=`'?$0-9_*@+#!~\/]+ *\\)+ *: *\\([^,\\.]+\\))" 2 font-lock-type-face) ;;types declared with variables
+    ;("(\\(\\([-A-Za-z^=`'?$0-9_*@+#!~\/]+ *\\)+\\) *: *\\([^,\\.]+\\))" 1 font-lock-variable-name-face) ;;variables declared (or used) with types
   ;;Highlighting types for kind, type, and defines
     ("Kind +\\(\\([-A-Za-z^=`'?$0-9_*@+#!~\/]+ *, *\\)*[-A-Za-z^=`'?$0-9_*@+#!~\/]+\\) +[^\\.]+ *." 1 font-lock-type-face) ;;declaring the kind of a type
     ("Type +\\([-A-Za-z^=`'?$0-9_*@+#!~\/]+ *, *\\)*[-A-Za-z^=`'?$0-9_*@+#!~\/]+ +\\([^\\.]+\\) *." 2 font-lock-type-face) ;;declaring the type of a constructor
