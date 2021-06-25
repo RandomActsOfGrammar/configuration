@@ -139,7 +139,7 @@
                      "autocopy" "import" "imports" "association"
                      "precedence" "synthesized" "inherited" "functor" "with"
                      "as" "include" "only" "hiding" "using" "forwards" "to"
-                     "use" "syntax" "forwarding" "function" "return"
+                     "use" "syntax" "forwarding" "function" "return" "when"
                      ;; the ones I put here that they put elsewhere
                      "let" "attribute" "case" "end" "parser" "of" "true" "false"
                      ;; just for monad stuff
