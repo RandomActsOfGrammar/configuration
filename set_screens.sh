@@ -16,7 +16,7 @@ main () {
                 argument_found=true
                 ;;
             apartment | apt | a )
-                right_tall
+                right_tall_mid
                 argument_found=true
                 ;;
             keller | k )
@@ -38,7 +38,7 @@ main () {
         if xrandr -q | grep "HDMI1" | grep "disconnected"; then
             just_laptop
         else
-            right_tall
+            right_tall_mid
         fi
     fi
 }
@@ -53,7 +53,7 @@ show_help () {
     echo ""
     echo "Available configuration options:"
     echo "   laptop, l:  Turn HDMI off so only the laptop screen is turned on"
-    echo "   apartment, apt, a:  Set HDMI tall and to the right"
+    echo "   apartment, apt, a:  Set HDMI tall and to the left"
     echo "   home, h:  Set HDMI to the left of the laptop screen"
     echo ""
     echo "If no configuration is given:"
@@ -69,14 +69,20 @@ just_laptop () {
     xrandr --fb 1366x768 --output eDP1 --pos 0x0 --output HDMI1 --off
 }
 
-#sideways screen on the right, like at my apartment
+#sideways screen on the right
 right_tall () {
     xrandr --fb 2446x1920 \
            --output HDMI1 --mode 1920x1080 --rotate left --pos 1366x0 \
            --output eDP1 --pos 0x1152
 }
 
-#long one above, like at home
+#sideways screen on the right with laptop halfway up
+right_tall_mid () {
+    xrandr --output eDP1 --primary --mode 1366x768 --pos 0x576 --rotate normal \
+           --output HDMI1 --mode 1920x1080 --pos 1366x0 --rotate left
+}
+
+#long one on the left
 left_long () {
     xrandr --output eDP1 --primary --mode 1366x768 --pos 1920x509 --rotate normal \
            --output HDMI1 --mode 1920x1080 --pos 0x0 --rotate normal \

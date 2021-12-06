@@ -193,6 +193,8 @@ bindsym XF86AudioMute exec /usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle
 #change the brightness
 bindsym XF86MonBrightnessDown exec backlight_control -2
 bindsym XF86MonBrightnessUp   exec backlight_control +2
+bindsym $tux+j exec backlight_control -2
+bindsym $tux+o exec backlight_control +2
 
 #move a workspace to another display
 bindsym Control+Shift+Right move workspace to output right

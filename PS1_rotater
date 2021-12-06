@@ -180,6 +180,11 @@ toSweden(){
     CURRENT_PROMPT_COLOR_NUM=34
 }
 
+toRoman(){
+    COLORS_FOR_THIS_TERM=(31 33)
+    CURRENT_PROMPT_COLOR_NUM=31
+}
+
 
 #let people pick their colors
 pickPS1Colors(){
