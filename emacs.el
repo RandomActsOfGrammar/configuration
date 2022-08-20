@@ -129,6 +129,9 @@
 ;;Include Teyjus Emacs
 (load "~/programs/teyjus/emacs/teyjus.el")
 
+;;Include LRAT and DIMACS modes
+(load "~/configuration/sat-solving-modes.el")
+
 
 (defconst proof-site-file
   (expand-file-name "path/to/PG/generic/proof-site.el"))
