@@ -109,6 +109,8 @@
 ;;Limit width of lines in text mode--automatically shortens when you hit
 ;;    <enter> or do a <space>
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
+;;Automatically spellcheck text files
+(add-hook 'text-mode-hook 'turn-on-flyspell)
 
 ;;tabs are spaces
 (setq-default indent-tabs-mode nil)
