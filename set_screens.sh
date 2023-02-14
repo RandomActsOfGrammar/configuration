@@ -66,25 +66,24 @@ show_help () {
 
 #just the laptop screen, nothing else
 just_laptop () {
-    xrandr --fb 1366x768 --output eDP1 --pos 0x0 --output HDMI1 --off
+    xrandr --output eDP1 --pos 0x0 --output HDMI1 --off
 }
 
 #sideways screen on the right
 right_tall () {
-    xrandr --fb 2446x1920 \
-           --output HDMI1 --mode 1920x1080 --rotate left --pos 1366x0 \
-           --output eDP1 --pos 0x1152
+    xrandr --output eDP-1 --mode 1920x1080 --pos 0x840 --rotate normal \
+           --output HDMI-1 --primary --mode 1920x1080 --pos 1920x0 --rotate left
 }
 
 #sideways screen on the right with laptop halfway up
 right_tall_mid () {
-    xrandr --output eDP1 --primary --mode 1366x768 --pos 0x576 --rotate normal \
-           --output HDMI1 --mode 1920x1080 --pos 1366x0 --rotate left
+    xrandr --output eDP-1 --mode 1920x1080 --pos 0x536 --rotate normal \
+           --output HDMI-1 --primary --mode 1920x1080 --pos 1920x0 --rotate left
 }
 
 #long one on the left
 left_long () {
-    xrandr --output eDP1 --primary --mode 1366x768 --pos 1920x509 --rotate normal \
+    xrandr --output eDP1 --primary --pos 1920x509 --rotate normal \
            --output HDMI1 --mode 1920x1080 --pos 0x0 --rotate normal \
            --output VIRTUAL1 --off
 }
