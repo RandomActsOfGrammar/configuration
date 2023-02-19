@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #whether to use a single image (1) or randomize from a directory (0)
-USE_SINGLE=0
+USE_SINGLE=1
 #what picture to use for a single image
-SINGLE_IMAGE=/home/tux/Pictures/arch/arch_prism.png
+SINGLE_IMAGE=/home/tux/Pictures/TriumphOfTheImmaculate.jpeg
 #the directory to pull images from--must end with a slash
 IMAGE_DIRECTORY=/home/tux/OneDrive/Pictures/albumCovers/
 #how long (seconds) to wait between changing the background picture

@@ -189,6 +189,10 @@ bindsym XF86AudioLowerVolume exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ 
 bindsym XF86AudioRaiseVolume exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ '+5%'
 #this is my attempt for a mute
 bindsym XF86AudioMute exec /usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle
+#bindings that don't rely on special keys
+bindsym $tux+k exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ '-5%'
+bindsym $tux+e exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ '+5%'
+bindsym $tux+m exec /usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle
 
 #change the brightness
 bindsym XF86MonBrightnessDown exec backlight_control -2
@@ -218,7 +222,6 @@ bindsym $mainmod+g exec /usr/bin/google-chrome-stable
 bindsym $tux+s exec /home/tux/configuration/set_screens.sh
 bindsym $tux+a exec /home/tux/configuration/set_audio.sh
 bindsym $tux+b exec /home/tux/configuration/background.sh
-bindsym $tux+k exec /home/tux/configuration/set_screens.sh k
 
 
 for_window [class="Tor"] floating enable

@@ -66,7 +66,7 @@ show_help () {
 
 #just the laptop screen, nothing else
 just_laptop () {
-    xrandr --output eDP1 --pos 0x0 --output HDMI1 --off
+    xrandr --output eDP-1 --pos 0x0 --output HDMI-1 --off
 }
 
 #sideways screen on the right
@@ -83,16 +83,14 @@ right_tall_mid () {
 
 #long one on the left
 left_long () {
-    xrandr --output eDP1 --primary --pos 1920x509 --rotate normal \
-           --output HDMI1 --mode 1920x1080 --pos 0x0 --rotate normal \
-           --output VIRTUAL1 --off
+    xrandr --output eDP-1 --primary --pos 1920x509 --rotate normal \
+           --output HDMI-1 --mode 1920x1080 --pos 0x0 --rotate normal
 }
 
 #slightly wider and placed above
 keller6_212 () {
-    xrandr --output eDP1 --primary --mode 1366x768 --pos 0x720 --rotate normal \
-           --output HDMI1 --mode 1280x720 --pos 0x0 --rotate normal \
-           --output VIRTUAL1 --off
+    xrandr --output eDP-1 --primary --mode 1366x768 --pos 0x720 --rotate normal \
+           --output HDMI-1 --mode 1280x720 --pos 0x0 --rotate normal
 }
 
 

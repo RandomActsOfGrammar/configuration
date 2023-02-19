@@ -198,5 +198,4 @@
   )
 
 ;;OCaml mode
-(load
-   "~/.opam/system/share/emacs/site-lisp/tuareg-site-file")
+;(load "~/.opam/system/share/emacs/site-lisp/tuareg-site-file")
