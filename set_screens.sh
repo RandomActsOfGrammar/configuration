@@ -35,7 +35,7 @@ main () {
 
     #no arguments; decide based on connections
     if ! $argument_found; then
-        if xrandr -q | grep "HDMI1" | grep "disconnected"; then
+        if xrandr -q | grep "HDMI-1" | grep "disconnected"; then
             just_laptop
         else
             right_tall_mid
@@ -66,7 +66,7 @@ show_help () {
 
 #just the laptop screen, nothing else
 just_laptop () {
-    xrandr --output eDP-1 --pos 0x0 --output HDMI-1 --off
+    xrandr --output eDP-1 --pos 0x0 --primary --output HDMI-1 --off
 }
 
 #sideways screen on the right
